@@ -6,6 +6,8 @@ authors = ["arabian"]
 description = "A tool that helps to build .msp file mod"
 readme = "README.md"
 license = "MIT"
+homepage = "https://github.com/arabianq/build_msp"
+repository = "https://github.com/arabianq/build_msp"
 keywords = ["switch", "nintendo", "mod", "mods", "msp"]
 build = "build.rs"
 
