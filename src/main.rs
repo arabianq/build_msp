@@ -88,24 +88,24 @@ fn main() -> Result<(), Error> {
     assert!(manifest_path.exists(), "Manifest path does not exist");
 
     let current_dir: PathBuf = absolute(Path::new("."))?;
-    let temp_dir: PathBuf = current_dir.join("temp");
+    let temp_path: PathBuf = current_dir.join("temp");
 
-    if temp_dir.exists() {
-        remove_dir_all(&temp_dir)?;
+    if temp_path.exists() {
+        remove_dir_all(&temp_path)?;
     }
-    create_dir(&temp_dir)?;
+    create_dir(&temp_path)?;
 
-    copy(&manifest_path, temp_dir.join("manifest"))?;
+    copy(&manifest_path, temp_path.join("manifest"))?;
 
     #[cfg(target_os = "windows")]
-    let build_romfs_path = temp_dir.join("build_romfs.exe");
+    let build_romfs_path = temp_path.join("build_romfs.exe");
     #[cfg(target_os = "windows")]
-    let build_pfs0_path = temp_dir.join("build_pfs0.exe");
+    let build_pfs0_path = temp_path.join("build_pfs0.exe");
 
     #[cfg(not(target_os = "windows"))]
-    let build_romfs_path: PathBuf = temp_dir.join("build_romfs");
+    let build_romfs_path: PathBuf = temp_path.join("build_romfs");
     #[cfg(not(target_os = "windows"))]
-    let build_pfs0_path: PathBuf = temp_dir.join("build_pfs0");
+    let build_pfs0_path: PathBuf = temp_path.join("build_pfs0");
 
     let mut build_romfs_file: File = File::create(&build_romfs_path)?;
     build_romfs_file.write_all(BUILD_ROMFS_BIN)?;
@@ -131,22 +131,22 @@ fn main() -> Result<(), Error> {
         if item.is_dir() && name == "romfs" {
             println!("Found romfs directory. Building romfs.bin...");
             std::process::Command::new(&build_romfs_path)
-                .current_dir(&temp_dir)
+                .current_dir(&temp_path)
                 .arg(&item)
-                .arg(&temp_dir.join("romfs.bin"))
+                .arg(&temp_path.join("romfs.bin"))
                 .status()?;
             continue;
         }
 
         if files_to_copy.contains(&&name) {
             println!("Found {}, copying...", name);
-            copy(&item, &temp_dir.join(name))?;
+            copy(&item, &temp_path.join(name))?;
             continue;
         }
 
         if name.ends_with(".ips") {
             println!("Found {}, copying...", name);
-            copy(&item, &temp_dir.join(name))?;
+            copy(&item, &temp_path.join(name))?;
             continue;
         }
     }
@@ -156,12 +156,12 @@ fn main() -> Result<(), Error> {
 
     println!("Building {}...", output_path.display());
     std::process::Command::new(&build_pfs0_path)
-        .current_dir(&temp_dir)
-        .arg(&temp_dir)
+        .current_dir(&temp_path)
+        .arg(&temp_path)
         .arg(&output_path)
         .status()?;
 
-    remove_dir_all(&temp_dir)?;
+    remove_dir_all(&temp_path)?;
 
     Ok(())
 }
