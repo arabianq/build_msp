@@ -7,6 +7,7 @@ description = "A tool that helps to build .msp file mod"
 readme = "README.md"
 license = "MIT"
 keywords = ["switch", "nintendo", "mod", "mods", "msp"]
+build = "build.rs"
 
 [dependencies]
 
