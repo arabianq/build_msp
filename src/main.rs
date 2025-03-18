@@ -98,14 +98,14 @@ fn main() -> Result<(), Error> {
     copy(&manifest_path, temp_path.join("manifest"))?;
 
     #[cfg(target_os = "windows")]
-    let build_romfs_path = temp_path.join("build_romfs.exe");
+    let build_romfs_path = current_dir.join("build_romfs.exe");
     #[cfg(target_os = "windows")]
-    let build_pfs0_path = temp_path.join("build_pfs0.exe");
+    let build_pfs0_path = current_dir.join("build_pfs0.exe");
 
     #[cfg(not(target_os = "windows"))]
-    let build_romfs_path: PathBuf = temp_path.join("build_romfs");
+    let build_romfs_path: PathBuf = current_dir.join("build_romfs");
     #[cfg(not(target_os = "windows"))]
-    let build_pfs0_path: PathBuf = temp_path.join("build_pfs0");
+    let build_pfs0_path: PathBuf = current_dir.join("build_pfs0");
 
     let mut build_romfs_file: File = File::create(&build_romfs_path)?;
     build_romfs_file.write_all(BUILD_ROMFS_BIN)?;
