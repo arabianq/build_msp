@@ -151,9 +151,6 @@ fn main() -> Result<(), Error> {
         }
     }
 
-    remove_file(&build_romfs_path)?;
-    remove_file(&build_pfs0_path)?;
-
     println!("Building {}...", output_path.display());
     std::process::Command::new(&build_pfs0_path)
         .current_dir(&temp_path)
@@ -161,6 +158,8 @@ fn main() -> Result<(), Error> {
         .arg(&output_path)
         .status()?;
 
+    remove_file(&build_romfs_path)?;
+    remove_file(&build_pfs0_path)?;
     remove_dir_all(&temp_path)?;
 
     Ok(())
