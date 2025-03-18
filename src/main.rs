@@ -89,39 +89,43 @@ fn main() -> Result<(), Error> {
 
     let current_dir: PathBuf = absolute(Path::new("."))?;
     let temp_path: PathBuf = current_dir.join("temp");
+    let mod_path: PathBuf = temp_path.join("mod");
 
     if temp_path.exists() {
         remove_dir_all(&temp_path)?;
     }
     create_dir(&temp_path)?;
+    create_dir(&mod_path)?;
 
-    copy(&manifest_path, temp_path.join("manifest"))?;
+    copy(&manifest_path, mod_path.join("manifest"))?;
 
     #[cfg(target_os = "windows")]
-    let build_romfs_path = current_dir.join("build_romfs.exe");
+    let build_romfs_path = temp_path.join("build_romfs.exe");
     #[cfg(target_os = "windows")]
-    let build_pfs0_path = current_dir.join("build_pfs0.exe");
+    let build_pfs0_path = temp_path.join("build_pfs0.exe");
 
     #[cfg(not(target_os = "windows"))]
-    let build_romfs_path: PathBuf = current_dir.join("build_romfs");
+    let build_romfs_path: PathBuf = temp_path.join("build_romfs");
     #[cfg(not(target_os = "windows"))]
-    let build_pfs0_path: PathBuf = current_dir.join("build_pfs0");
+    let build_pfs0_path: PathBuf = temp_path.join("build_pfs0");
 
-    let mut build_romfs_file: File = File::create(&build_romfs_path)?;
-    build_romfs_file.write_all(BUILD_ROMFS_BIN)?;
-    #[cfg(not(target_os = "windows"))]
-    set_permissions(
-        &build_romfs_path,
-        std::os::unix::fs::PermissionsExt::from_mode(0o755),
-    )?;
+    {
+        let mut build_romfs_file: File = File::create(&build_romfs_path)?;
+        build_romfs_file.write_all(BUILD_ROMFS_BIN)?;
+        #[cfg(not(target_os = "windows"))]
+        set_permissions(
+            &build_romfs_path,
+            std::os::unix::fs::PermissionsExt::from_mode(0o755),
+        )?;
 
-    let mut build_pfs0_file: File = File::create(&build_pfs0_path)?;
-    build_pfs0_file.write_all(BUILD_PFS0_BIN)?;
-    #[cfg(not(target_os = "windows"))]
-    set_permissions(
-        &build_pfs0_path,
-        std::os::unix::fs::PermissionsExt::from_mode(0o755),
-    )?;
+        let mut build_pfs0_file: File = File::create(&build_pfs0_path)?;
+        build_pfs0_file.write_all(BUILD_PFS0_BIN)?;
+        #[cfg(not(target_os = "windows"))]
+        set_permissions(
+            &build_pfs0_path,
+            std::os::unix::fs::PermissionsExt::from_mode(0o755),
+        )?;
+    }
 
     let all_items: Vec<PathBuf> = list_items(&input_path)?;
     let files_to_copy: HashSet<&&str> = FILES_TO_COPY.iter().collect();
@@ -131,30 +135,30 @@ fn main() -> Result<(), Error> {
         if item.is_dir() && name == "romfs" {
             println!("Found romfs directory. Building romfs.bin...");
             std::process::Command::new(&build_romfs_path)
-                .current_dir(&temp_path)
+                .current_dir(&mod_path)
                 .arg(&item)
-                .arg(&temp_path.join("romfs.bin"))
+                .arg(&mod_path.join("romfs.bin"))
                 .status()?;
             continue;
         }
 
         if files_to_copy.contains(&&name) {
             println!("Found {}, copying...", name);
-            copy(&item, &temp_path.join(name))?;
+            copy(&item, &mod_path.join(name))?;
             continue;
         }
 
         if name.ends_with(".ips") {
             println!("Found {}, copying...", name);
-            copy(&item, &temp_path.join(name))?;
+            copy(&item, &mod_path.join(name))?;
             continue;
         }
     }
 
     println!("Building {}...", output_path.display());
     std::process::Command::new(&build_pfs0_path)
-        .current_dir(&temp_path)
-        .arg(&temp_path)
+        .current_dir(&mod_path)
+        .arg(&mod_path)
         .arg(&output_path)
         .status()?;
 
