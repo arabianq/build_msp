@@ -2,5 +2,17 @@
 name = "build_msp"
 version = "0.1.0"
 edition = "2024"
+authors = ["arabian"]
+description = "A tool that helps to build .msp file mod"
+readme = "README.md"
+license = "MIT"
+keywords = ["switch", "nintendo", "mod", "mods", "msp"]
 
 [dependencies]
+
+[profile.release]
+strip = true
+lto = true
+codegen-units = 1
+opt-level = "z"
+panic = "abort"
