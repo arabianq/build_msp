@@ -41,6 +41,7 @@ You can install build_msp from crates.io
 4. Done. Now there is a binary in _target/release_ directory
 
 ### Notes
+- **You can install .msp files only with DBI (Duckbill Installer) 772+. [Latest DBI](https://dbi.ultranx.ru/assets/dbi_ru.zip)**
 - **build_romfs** and **build_pfs0** from [switch-tools](https://github.com/switchbrew/switch-tools) are used
 - Supports romfs, exefs and ips mods
 - Supports confg.ini and icon.jpg
