@@ -56,7 +56,7 @@ struct Args {
     #[arg(short = 'o', long = "output", default_value = "mod.msp")]
     output: PathBuf,
 
-    #[arg(short = 'm', long = "manifest", default_value = "./manifest")]
+    #[arg(short = 'm', long = "manifest", default_value = "manifest")]
     manifest: PathBuf,
 }
 
