@@ -31,6 +31,9 @@ patchset=kpnp_russ
 - version - recommended game version (optional)
 - patchset- name for the .ips patches directory (optional)
 
+### Installing
+You can download pre-built binaries from [releases page](https://github.com/arabianq/build_msp/releases)
+
 ### Installing using cargo
 You can install build_msp from crates.io
 ```cargo install build_msp```
