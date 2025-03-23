@@ -1,3 +1,5 @@
+[English](README.md) | [Русский](README.ru.md)
+
 # build_msp
 _A tool that helps to build .msp file mod_
 
@@ -15,6 +17,9 @@ Options:
   -V, --version              Print version
 
 ```
+- **--input** - the source directory with the mod files
+- **--output** - path to the .msp file
+- **--manifest** - path to the manifest
 
 ### Manifest example
 ```
