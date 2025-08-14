@@ -1,10 +1,11 @@
 use clap::{Error, Parser};
+
 use std::collections::HashSet;
-use std::fs::{File, ReadDir};
-use std::fs::{copy, create_dir, read_dir, remove_dir_all, remove_file, set_permissions};
+use std::fs::{
+    copy, create_dir, read_dir, remove_dir_all, remove_file, set_permissions, File, ReadDir,
+};
 use std::io::Write;
-use std::path::absolute;
-use std::path::{Path, PathBuf};
+use std::path::{absolute, Path, PathBuf};
 
 #[cfg(target_os = "windows")]
 const BUILD_ROMFS_BIN: &[u8] = include_bytes!("../switch-tools/build_romfs.exe");
