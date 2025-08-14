@@ -1,6 +1,5 @@
 use clap::{Error, Parser};
 
-use std::collections::HashSet;
 use std::fs::{
     copy, create_dir, read_dir, remove_dir_all, remove_file, set_permissions, File, ReadDir,
 };
@@ -100,28 +99,29 @@ fn main() -> Result<(), Error> {
 
     copy(&manifest_path, mod_path.join("manifest"))?;
 
+    let build_romfs_path: PathBuf;
+    let build_pfs0_path: PathBuf;
     #[cfg(target_os = "windows")]
-    let build_romfs_path = temp_path.join("build_romfs.exe");
-    #[cfg(target_os = "windows")]
-    let build_pfs0_path = temp_path.join("build_pfs0.exe");
-
-    #[cfg(not(target_os = "windows"))]
-    let build_romfs_path: PathBuf = temp_path.join("build_romfs");
-    #[cfg(not(target_os = "windows"))]
-    let build_pfs0_path: PathBuf = temp_path.join("build_pfs0");
-
     {
-        let mut build_romfs_file: File = File::create(&build_romfs_path)?;
-        build_romfs_file.write_all(BUILD_ROMFS_BIN)?;
-        #[cfg(not(target_os = "windows"))]
+        build_romfs_path = temp_path.join("build_romfs.exe");
+        build_pfs0_path = temp_path.join("build_pfs0.exe");
+    }
+    #[cfg(not(target_os = "windows"))]
+    {
+        build_romfs_path = temp_path.join("build_romfs");
+        build_pfs0_path = temp_path.join("build_pfs0");
+    }
+
+    let mut build_romfs_file: File = File::create(&build_romfs_path)?;
+    let mut build_pfs0_file: File = File::create(&build_pfs0_path)?;
+    build_romfs_file.write_all(BUILD_ROMFS_BIN)?;
+    build_pfs0_file.write_all(BUILD_PFS0_BIN)?;
+    #[cfg(not(target_os = "windows"))]
+    {
         set_permissions(
             &build_romfs_path,
             std::os::unix::fs::PermissionsExt::from_mode(0o755),
         )?;
-
-        let mut build_pfs0_file: File = File::create(&build_pfs0_path)?;
-        build_pfs0_file.write_all(BUILD_PFS0_BIN)?;
-        #[cfg(not(target_os = "windows"))]
         set_permissions(
             &build_pfs0_path,
             std::os::unix::fs::PermissionsExt::from_mode(0o755),
@@ -129,7 +129,6 @@ fn main() -> Result<(), Error> {
     }
 
     let all_items: Vec<PathBuf> = list_items(&input_path)?;
-    let files_to_copy: HashSet<&&str> = FILES_TO_COPY.iter().collect();
     for item in all_items {
         let name: &str = item.file_name().unwrap().to_str().unwrap();
 
@@ -143,7 +142,7 @@ fn main() -> Result<(), Error> {
             continue;
         }
 
-        if files_to_copy.contains(&&name) {
+        if FILES_TO_COPY.contains(&name) {
             println!("Found {}, copying...", name);
             copy(&item, &mod_path.join(name))?;
             continue;
