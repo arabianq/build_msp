@@ -32,7 +32,7 @@ jobs:
       with:
         msystem: MINGW64
         update: true
-        install: autoconf automake libtool make
+        install: autoconf automake libtool make m4 perl autotools
 
     - name: Install Rust
       uses: dtolnay/rust-toolchain@stable
