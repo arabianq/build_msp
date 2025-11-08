@@ -132,7 +132,7 @@ fn main() -> Result<(), Error> {
     for item in all_items {
         let name: &str = item.file_name().unwrap().to_str().unwrap();
 
-        if item.is_dir() && name == "romfs" {
+        if item.is_dir() && name.to_lowercase() == "romfs" {
             println!("Found romfs directory. Building romfs.bin...");
             std::process::Command::new(&build_romfs_path)
                 .current_dir(&mod_path)
