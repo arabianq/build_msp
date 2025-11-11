@@ -1,10 +1,10 @@
 use clap::{Error, Parser};
 
 use std::fs::{
-    copy, create_dir, read_dir, remove_dir_all, remove_file, set_permissions, File, ReadDir,
+    File, ReadDir, copy, create_dir, read_dir, remove_dir_all, remove_file, set_permissions,
 };
 use std::io::Write;
-use std::path::{absolute, Path, PathBuf};
+use std::path::{Path, PathBuf, absolute};
 
 #[cfg(target_os = "windows")]
 const BUILD_ROMFS_BIN: &[u8] = include_bytes!("../switch-tools/build_romfs.exe");
@@ -112,16 +112,24 @@ fn main() -> Result<(), Error> {
         build_pfs0_path = temp_path.join("build_pfs0");
     }
 
-    let mut build_romfs_file: File = File::create(&build_romfs_path)?;
-    let mut build_pfs0_file: File = File::create(&build_pfs0_path)?;
-    build_romfs_file.write_all(BUILD_ROMFS_BIN)?;
-    build_pfs0_file.write_all(BUILD_PFS0_BIN)?;
+    #[cfg(target_os = "windows")]
+    {
+        let mut build_romfs_file: File = File::create(&build_romfs_path)?;
+        let mut build_pfs0_file: File = File::create(&build_pfs0_path)?;
+        build_romfs_file.write_all(BUILD_ROMFS_BIN)?;
+        build_pfs0_file.write_all(BUILD_PFS0_BIN)?;
+    }
     #[cfg(not(target_os = "windows"))]
     {
+        let mut build_romfs_file: File = File::create(&build_romfs_path)?;
+        build_romfs_file.write_all(BUILD_ROMFS_BIN)?;
         set_permissions(
             &build_romfs_path,
             std::os::unix::fs::PermissionsExt::from_mode(0o755),
         )?;
+
+        let mut build_pfs0_file: File = File::create(&build_pfs0_path)?;
+        build_pfs0_file.write_all(BUILD_PFS0_BIN)?;
         set_permissions(
             &build_pfs0_path,
             std::os::unix::fs::PermissionsExt::from_mode(0o755),
