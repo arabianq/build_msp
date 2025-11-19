@@ -1,3 +1,78 @@
-/target
-/.idea
+# macOS
 .DS_Store
+.localized
+
+# Build artifacts
+build/
+cmake-build-*/
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake
+*.o
+*.a
+*.so
+*.dylib
+*.exe
+*.bin
+*.out
+*.obj
+*.lib
+*.dll
+*.exp
+*.ilk
+*.pdb
+*.idb
+*.sbr
+*.res
+*.pch
+*.ipch
+*.aps
+*.bsc
+*.ncb
+*.suo
+*.user
+*.vcproj.user
+*.sdf
+*.opensdf
+*.tlog
+*.log
+*.manifest
+*.lastbuildstate
+*.filters
+*.vcxproj
+*.vcxproj.filters
+*.sln
+*.suo
+*.user
+*.bak
+*.tmp
+*.swp
+*.swo
+*.orig
+*.rej
+*.gch
+*.gcno
+*.gcda
+*.gcov
+*.d
+
+# IDE and editor files
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Dependencies
+/target/
+
+# Test data
+test/
+
+# Binary
+build_msp
+
+# Submodule specific ignores
+# switch-tools/build/
+# switch-tools/cmake-build-*/
