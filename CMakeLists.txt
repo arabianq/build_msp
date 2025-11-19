@@ -8,7 +8,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-    set(CMAKE_CXX_FLAGS "/W4")
+    set(CMAKE_CXX_FLAGS "/W4 /EHsc")
     set(CMAKE_CXX_FLAGS_DEBUG "/Zi")
     set(CMAKE_CXX_FLAGS_RELEASE "/O3")
 else()

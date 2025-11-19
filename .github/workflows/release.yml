@@ -1,0 +1,77 @@
+name: Release Build
+
+on:
+    release:
+        types: [published]
+    workflow_dispatch:
+        inputs:
+            tag:
+                description: "Tag to build from (e.g., v1.0.0)"
+                required: true
+                default: ""
+
+jobs:
+    build:
+        runs-on: ${{ matrix.os }}
+        strategy:
+            matrix:
+                os: [ubuntu-latest, macos-latest, windows-latest]
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+              with:
+                  ref: ${{ github.event.inputs.tag || github.ref }}
+                  submodules: recursive
+
+            - name: Install dependencies (Linux)
+              if: startsWith(runner.os, 'Linux')
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y build-essential cmake
+
+            - name: Install latest CMake (Linux)
+              if: startsWith(runner.os, 'Linux')
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y wget
+                  wget https://github.com/Kitware/CMake/releases/download/v4.0.0/cmake-4.0.0-linux-x86_64.sh
+                  sudo sh cmake-4.0.0-linux-x86_64.sh --skip-license --prefix=/usr/local
+                  cmake --version
+
+            - name: Install dependencies (macOS)
+              if: startsWith(runner.os, 'macOS')
+              run: |
+                  brew update
+                  brew install cmake
+
+            - name: Install MSYS2 and MinGW-w64 (Windows)
+              if: startsWith(runner.os, 'Windows')
+              uses: msys2/setup-msys2@v2
+              with:
+                  msystem: MINGW64
+                  update: true
+                  install: >-
+                      mingw-w64-x86_64-gcc
+                      mingw-w64-x86_64-cmake
+                      mingw-w64-x86_64-make
+                      git
+
+            - name: Configure and Build (Windows)
+              if: startsWith(runner.os, 'Windows')
+              shell: msys2 {0}
+              run: |
+                  cmake . -G "MinGW Makefiles"
+                  cmake --build .
+
+            - name: Configure and Build (Linux/macOS)
+              if: startsWith(runner.os, 'Linux') || startsWith(runner.os, 'macOS')
+              run: |
+                  cmake .
+                  make
+
+            - name: Upload Artifact
+              uses: actions/upload-artifact@v4
+              with:
+                  name: build_msp-${{ matrix.os }}-${{ github.event.inputs.tag || github.ref_name }}${{ startsWith(matrix.os, 'Windows') && '.exe' || '' }}
+                  path: build_msp${{ startsWith(matrix.os, 'Windows') && '.exe' || '' }}
