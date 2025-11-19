@@ -34,19 +34,16 @@ patchset=kpnp_russ
 ### Installing
 You can download pre-built binaries from [releases page](https://github.com/arabianq/build_msp/releases)
 
-### Installing using cargo
-You can install build_msp from crates.io
-```cargo install build_msp```
-
 ### Building
-1. Install [Rust Lang](https://www.rust-lang.org/tools/install)
+1. Install CMake (if not already installed)
 2. Clone this repository (including switch-tools submodule)
 
     ```git clone --recursive https://github.com/arabianq/build_msp```
-3. Build the program using Cargo
-
-    ```cd build_msp; cargo build --release```
-4. Done. Now there is a binary in _target/release_ directory
+3. Configure the project with CMake
+    ```cmake .```
+4. Build the project
+    ```make```
+5. Done. The executable will be in the current directory.
 
 ### Notes
 - **You can install .msp files only with DBI (Duckbill Installer) 772+. [Latest DBI](https://dbi.ultranx.ru/assets/dbi_ru.zip)**

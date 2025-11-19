@@ -34,19 +34,16 @@ patchset=kpnp_russ
 ### Установка
 Вы можете скачать готовые исполняемые файлы со [страницы релизов](https://github.com/arabianq/build_msp/releases)
 
-### Установка с помощью cargo
-Вы можете установить build_msp из crates.io
-```cargo install build_msp```
-
 ### Сборка
-1. Установите [Rust Lang](https://www.rust-lang.org/tools/install)
+1. Установите CMake (если еще не установлен)
 2. Клонируйте этот репозиторий (включая субмодуль switch-tools)
 
-   ```git clone --recursive https://github.com/arabianq/build_msp```
-3. Запустите сборку с помощью cargo
-
-   ```cd build_msp; cargo build --release```
-4. Готово. Теперь в директории _target/release_ находится исполняемый файл
+    ```git clone --recursive https://github.com/arabianq/build_msp```
+3. Сконфигурируйте проект с помощью CMake
+    ```cmake ..```
+4. Соберите проект
+    ```make```
+5. Готово. Исполняемый файл будет находиться текущей директории.
 
 ### Особенности
 - **Устанавливать .msp файлы можно только с помощью DBI (Duckbill Installer) 772+. [Последняя версия DBI](https://dbi.ultranx.ru/assets/dbi_ru.zip)**
