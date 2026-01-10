@@ -61,9 +61,9 @@ int main(int argc, char *argv[])
     if (parse_args(argc, argv, input_path, output_path, manifest_path) == 1)
         return 0;
 
-    input_path = filesystem::absolute(input_path);
-    output_path = filesystem::absolute(output_path);
-    manifest_path = filesystem::absolute(manifest_path);
+    input_path = absolute(input_path);
+    output_path = absolute(output_path);
+    manifest_path = absolute(manifest_path);
 
     if (check_pathes(input_path, output_path, manifest_path) == 1)
         return 0;
