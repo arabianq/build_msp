@@ -62,6 +62,8 @@ jobs:
               shell: msys2 {0}
               run: |
                   cmake . -G "MinGW Makefiles" \
+                    -DCMAKE_C_FLAGS="-finput-charset=UTF-8 -fexec-charset=UTF-8" \
+                    -DCMAKE_CXX_FLAGS="-finput-charset=UTF-8 -fexec-charset=UTF-8" \
                     -DCMAKE_EXE_LINKER_FLAGS="-static -static-libgcc -static-libstdc++"
                   cmake --build .
 
