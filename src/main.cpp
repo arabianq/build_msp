@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
         remove_all(temp_dir);
 
     create_directory(temp_dir);
-    copy(manifest_path, temp_dir);
+    copy(manifest_path, temp_dir / "manifest");
 
     vector<path> all_items;
     list_items(input_path, all_items);
@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
         if (in_array(name, FILES_TO_COPY) || (name.ends_with(".ips")))
         {
             cout << "Found " << name << ", copying..." << endl;
-            copy(item, temp_dir);
+            copy(item, temp_dir / item.filename(), copy_options::overwrite_existing);
             continue;
         }
     }
