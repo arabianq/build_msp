@@ -61,7 +61,8 @@ jobs:
               if: startsWith(runner.os, 'Windows')
               shell: msys2 {0}
               run: |
-                  cmake . -G "MinGW Makefiles"
+                  cmake . -G "MinGW Makefiles" \
+                    -DCMAKE_EXE_LINKER_FLAGS="-static -static-libgcc -static-libstdc++"
                   cmake --build .
 
             - name: Configure and Build (Linux/macOS)
