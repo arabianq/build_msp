@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
         if (is_directory(item) && name == "romfs")
         {
             cout << "Found romfs directory. Building romfs.bin..." << endl;
-            build_romfs_by_paths((char *)item.c_str(), (char *)(temp_dir / "romfs.bin").c_str());
+            build_romfs_by_paths((char *)item.generic_string().c_str(), (char *)(temp_dir / "romfs.bin").generic_string().c_str());
             continue;
         }
 
@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
     }
 
     cout << "Building " << output_path << "..." << endl;
-    build_pfs0((char *)temp_dir.c_str(), (char *)output_path.c_str());
+    build_pfs0((char *)temp_dir.generic_string().c_str(), (char *)output_path.generic_string().c_str());
     remove_all(temp_dir);
     cout << "Done!" << endl;
 
