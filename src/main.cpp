@@ -54,7 +54,7 @@ bool in_array(const string &value, const vector<string> &array);
 
 int main(int argc, char *argv[])
 {
-    path input_path = "";
+    path input_path = current_path();
     path output_path = "mod.msp";
     path manifest_path = "manifest";
 
@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
     if (check_pathes(input_path, output_path, manifest_path) == 1)
         return 0;
 
-    path current_dir = absolute("");
+    path current_dir = current_path();
     path temp_dir = current_dir / "temp/";
 
     if (exists(temp_dir))
