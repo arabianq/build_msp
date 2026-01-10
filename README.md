@@ -47,6 +47,5 @@ You can download pre-built binaries from [releases page](https://github.com/arab
 
 ### Notes
 - **You can install .msp files only with DBI (Duckbill Installer) 772+. [Latest DBI](https://cp.arabianq.ru/ultranx/dbi/dbi_ru.zip)**
-- **build_romfs** and **build_pfs0** from [switch-tools](https://github.com/switchbrew/switch-tools) are used
 - Supports romfs, exefs and ips mods
 - Supports confg.ini and icon.jpg
