@@ -6,6 +6,11 @@
 
 #include "string.h"
 
+#ifdef _WIN32
+#include <windows.h>
+#include <shellapi.h>
+#endif
+
 extern "C"
 {
 #include "romfs.h"
@@ -14,6 +19,12 @@ extern "C"
 
 using namespace std;
 using namespace std::filesystem;
+
+string path_to_utf8(const path &p)
+{
+    auto u8str = p.u8string();
+    return string(u8str.begin(), u8str.end());
+}
 
 const vector<string> FILES_TO_COPY = {
     "romfs.bin",
@@ -47,18 +58,38 @@ const vector<string> FILES_TO_COPY = {
 };
 
 void print_help();
-int parse_args(int argc, char *argv[], path &input_path, path &output_path, path &manifest_path);
+int parse_args(const vector<string> &args, path &input_path, path &output_path, path &manifest_path);
 int check_pathes(path &input_path, path &output_path, path &manifest_path);
 void list_items(const path &dir_path, vector<path> &items);
 bool in_array(const string &value, const vector<string> &array);
 
 int main(int argc, char *argv[])
 {
+    vector<string> args;
+#ifdef _WIN32
+    int wargc;
+    LPWSTR *wargv = CommandLineToArgvW(GetCommandLineW(), &wargc);
+    if (wargv)
+    {
+        for (int i = 0; i < wargc; ++i)
+        {
+            int size_needed = WideCharToMultiByte(CP_UTF8, 0, wargv[i], -1, NULL, 0, NULL, NULL);
+            string utf8_arg(size_needed - 1, 0);
+            WideCharToMultiByte(CP_UTF8, 0, wargv[i], -1, &utf8_arg[0], size_needed, NULL, NULL);
+            args.push_back(utf8_arg);
+        }
+        LocalFree(wargv);
+    }
+#else
+    for (int i = 0; i < argc; ++i)
+        args.push_back(argv[i]);
+#endif
+
     path input_path = current_path();
     path output_path = "mod.msp";
     path manifest_path = "manifest";
 
-    if (parse_args(argc, argv, input_path, output_path, manifest_path) == 1)
+    if (parse_args(args, input_path, output_path, manifest_path) == 1)
         return 0;
 
     input_path = absolute(input_path);
@@ -88,7 +119,7 @@ int main(int argc, char *argv[])
         if (is_directory(item) && name == "romfs")
         {
             cout << "Found romfs directory. Building romfs.bin..." << endl;
-            build_romfs_by_paths((char *)item.generic_string().c_str(), (char *)(temp_dir / "romfs.bin").generic_string().c_str());
+            build_romfs_by_paths((char *)path_to_utf8(item).c_str(), (char *)path_to_utf8(temp_dir / "romfs.bin").c_str());
             continue;
         }
 
@@ -101,7 +132,7 @@ int main(int argc, char *argv[])
     }
 
     cout << "Building " << output_path << "..." << endl;
-    build_pfs0((char *)temp_dir.generic_string().c_str(), (char *)output_path.generic_string().c_str());
+    build_pfs0((char *)path_to_utf8(temp_dir).c_str(), (char *)path_to_utf8(output_path).c_str());
     remove_all(temp_dir);
     cout << "Done!" << endl;
 
@@ -122,12 +153,12 @@ void printHelp()
     cout << "\t-m, --manifest <MANIFEST>\t[default manifest]" << endl;
 }
 
-int parse_args(int argc, char *argv[], path &input_path, path &output_path, path &manifest_path)
+int parse_args(const vector<string> &args, path &input_path, path &output_path, path &manifest_path)
 {
-    for (int i = 1; i < argc; ++i)
+    for (size_t i = 1; i < args.size(); ++i)
     {
-        string arg_key = argv[i];
-        string arg_val = i + 1 < argc ? argv[i + 1] : "";
+        string arg_key = args[i];
+        string arg_val = i + 1 < args.size() ? args[i + 1] : "";
 
         if (arg_key == "--help")
         {
